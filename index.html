@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101917">
+  <meta name="description" content="Искра — игра о маленьком светящемся путешественнике, лабиринте и четырёх стражах. Без установок и зависимостей.">
+  <title>Искра — свет в лабиринте</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23101917'/%3E%3Ccircle cx='16' cy='16' r='10' fill='%23f6ce68'/%3E%3Crect x='17' y='11' width='6' height='10' rx='3' fill='%23101917'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="masthead">
+      <a class="brand" href="index.html" aria-label="Искра — главная">
+        <span class="brand-mark" aria-hidden="true">✳</span>
+        <span class="brand-name">искра<span class="brand-subtitle">маленькая аркада</span></span>
+      </a>
+      <span class="header-tag">Время для игры</span>
+    </header>
+
+    <main class="game-layout">
+      <section class="play-column" aria-label="Игровое поле">
+        <div class="game-topline">
+          <span class="section-label">01 / СВЕТ В ЛАБИРИНТЕ</span>
+          <span class="sound-note">Без звука. Только ритм.</span>
+        </div>
+        <div class="board-shell">
+          <canvas id="gameCanvas" width="630" height="690" tabindex="0" aria-label="Лабиринт: собирайте искры и избегайте четырёх стражей. Управление стрелками или WASD.">Для игры нужен браузер с поддержкой Canvas и JavaScript.</canvas>
+          <div id="overlay" class="game-overlay">
+            <div class="overlay-card">
+              <span id="overlayEyebrow" class="eyebrow">ВАША СЛЕДУЮЩАЯ МАЛЕНЬКАЯ ПОБЕДА</span>
+              <h1 id="overlayTitle">Следуй<br>за светом.</h1>
+              <p id="overlayText">Собери все искры. Обойди четырёх стражей. Большие заряды на время дадут тебе преимущество.</p>
+              <button id="startButton" class="primary-button" type="button">Начать игру →</button>
+              <span id="overlayHint" class="overlay-hint">или нажми Enter</span>
+            </div>
+          </div>
+        </div>
+        <div class="board-footer">
+          <span class="status-indicator" aria-hidden="true"></span>
+          <span id="statusText" role="status" aria-live="polite">Лабиринт ждёт тебя</span>
+          <span class="board-dimensions">21 × 23</span>
+        </div>
+        <div class="touch-controls" aria-label="Сенсорное управление">
+          <button class="touch-key touch-up" data-direction="up" aria-label="Вверх" type="button">↑</button>
+          <button class="touch-key touch-left" data-direction="left" aria-label="Влево" type="button">←</button>
+          <button class="touch-key touch-down" data-direction="down" aria-label="Вниз" type="button">↓</button>
+          <button class="touch-key touch-right" data-direction="right" aria-label="Вправо" type="button">→</button>
+        </div>
+      </section>
+
+      <aside class="sidebar" aria-label="Счёт и управление">
+        <div class="title-block">
+          <span class="eyebrow">СОБИРАЙ. УВОРАЧИВАЙСЯ. ПОВТОРЯЙ.</span>
+          <h2>Ещё один <br>поворот.</h2>
+          <p>Большое приключение<br>в маленьком лабиринте.</p>
+        </div>
+        <section class="stats-panel" aria-label="Показатели игры">
+          <div class="stat-row"><span class="stat-label">Твой счёт</span><span id="scoreValue" class="stat-value">00000</span></div>
+          <div class="stat-row"><span class="stat-label">Рекорд</span><span id="bestValue" class="stat-value">00000</span></div>
+          <div class="stat-row"><span class="stat-label">Уровень</span><span id="levelValue" class="stat-value">01</span></div>
+          <div class="lives-row"><span class="stat-label">Жизни</span><div id="livesValue" class="life-icons" role="img" aria-label="3 жизни"><span class="life-icon"></span><span class="life-icon"></span><span class="life-icon"></span></div></div>
+        </section>
+        <section class="controls-panel" aria-label="Как играть">
+          <h3 class="panel-heading">Всё в твоих руках</h3>
+          <div class="arrow-keys" aria-hidden="true"><span class="key up">↑</span><span class="key left">←</span><span class="key down">↓</span><span class="key right">→</span></div>
+          <div class="instruction-row"><span class="kbd">↑ ← ↓ →</span><span class="instruction-text">Двигайся. WASD тоже работает.</span></div>
+          <div class="instruction-row"><span class="kbd">Пробел</span><span class="instruction-text">Пауза и продолжение</span></div>
+          <div class="action-buttons">
+            <button id="pauseButton" class="secondary-button" type="button" disabled>Пауза</button>
+            <button id="restartButton" class="icon-button" type="button" aria-label="Перезапустить игру" title="Перезапустить игру">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1.7 7.2M4 4v6h6"/></svg>
+            </button>
+          </div>
+        </section>
+        <section class="legend-panel" aria-label="Предметы и противники">
+          <h3 class="panel-heading">На твоём пути</h3>
+          <div class="legend-row"><span class="legend-marker dot" aria-hidden="true"></span><p><strong>Маленькая искра</strong><span>+10 очков. Собери их все.</span></p></div>
+          <div class="legend-row"><span class="legend-marker power" aria-hidden="true"></span><p><strong>Большой заряд</strong><span>+50 очков и сила до 7 секунд.</span></p></div>
+          <div class="legend-row"><span class="legend-marker enemy" aria-hidden="true"></span><p><strong>Четыре стража</strong><span>Избегай их. С зарядом — догоняй.</span></p></div>
+          <p class="level-note">Каждый новый уровень — чуть быстрее. Каждый поворот — новый шанс.</p>
+        </section>
+        <div class="bottom-note"><span aria-hidden="true">✦</span> Твой рекорд остаётся с тобой.</div>
+      </aside>
+    </main>
+    <footer class="page-footer"><span class="footer-note">Создано из простых форм и любви к аркадам.</span><span class="footer-mark">НЕБОЛЬШАЯ ИГРА · БОЛЬШОЙ СВЕТ</span></footer>
+  </div>
+  <noscript><p style="padding:24px;text-align:center;color:#f6ce68">Включите JavaScript в браузере, чтобы играть.</p></noscript>
+</body>
+</html>
